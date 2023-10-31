@@ -8,15 +8,17 @@ import { buildConfig } from 'payload/config'
 
 import { addAuthorFields } from '@boomworks/payload-plugin-author-fields';
 
-import Users from './collections/Users'
+import User from './collections/User'
+import Item from "./collections/Item"
 
 export default buildConfig({
+  collections: [User, Item],
   admin: {
-    user: Users.slug,
+    user: User.slug,
     bundler: webpackBundler(), // bundler-config
   },
   editor: slateEditor({}), // editor-config
-  collections: [Users],
+  
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
@@ -25,9 +27,13 @@ export default buildConfig({
   },
   plugins: [
     payloadCloud(), 
-    addAuthorFields({ excludedCollections:[ Users.slug ]}),
+    addAuthorFields({ 
+      excludedCollections:[ User.slug ], 
+      //"createdByFieldName" : "owner" // TO be implemented. For bughunting should stay as it is.
+    }
+    ),
   ],
-  
+
   // database-adapter-config-start
   db: mongooseAdapter({
     url: process.env.DATABASE_URI,
