@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload/types'
-import { isAuthenticated, isOwner } from '../access/GenericUser'
+import { isAuthenticated, isOwner } from '../access/collection/User'
 
 const Item: CollectionConfig = {
   slug: 'item',

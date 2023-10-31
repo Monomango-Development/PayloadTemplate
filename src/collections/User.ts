@@ -1,10 +1,18 @@
 import { CollectionConfig } from 'payload/types'
+import { isAdmin as isFieldAdmin } from '../access/field/GenericUser'
+import { isAdminOrOwner, isAuthenticated } from "../access/collection/User"
 
 const User: CollectionConfig = {
   slug: 'user',
   auth: true,
   admin: {
     useAsTitle: 'email',
+  },
+  access : {
+    create : isAdminOrOwner,
+    delete : isAdminOrOwner,
+    update : isAdminOrOwner,
+    read : isAuthenticated
   },
   fields: [
     {
@@ -13,6 +21,9 @@ const User: CollectionConfig = {
       options : ["Admin", "Moderator", "User"],
       defaultValue : "User",
       saveToJWT : true,
+      access : {
+        "update" : isFieldAdmin
+      },
       admin : {
         isClearable : false
       }
