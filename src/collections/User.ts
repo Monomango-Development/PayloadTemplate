@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload/types'
-import { isAdmin as isFieldAdmin } from '../access/field/GenericUser'
+import { isAdmin as isFieldAdmin } from '../access/field/User'
 import { isAdminOrOwner, isAuthenticated } from "../access/collection/User"
 
 const User: CollectionConfig = {

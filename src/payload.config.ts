@@ -10,9 +10,10 @@ import { addAuthorFields } from '@boomworks/payload-plugin-author-fields';
 
 import User from './collections/User'
 import Item from "./collections/Item"
+import Parent from './collections/Parent'
 
 export default buildConfig({
-  collections: [User, Item],
+  collections: [User, Item, Parent],
   admin: {
     user: User.slug,
     bundler: webpackBundler(), // bundler-config

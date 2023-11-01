@@ -1,5 +1,6 @@
 import { Access } from "payload/config"
-import { Or, And } from "../Utils";
+
+import { And, Or } from "../utils/Logic"
 
 export const publicVisibile:Access = function (args){
     return true

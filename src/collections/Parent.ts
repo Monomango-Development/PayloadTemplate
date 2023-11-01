@@ -1,11 +1,8 @@
 import { CollectionConfig } from 'payload/types'
 import { isAuthenticated, isOwner } from '../access/collection/User'
 
-import { manyToOne } from './utils/Relation'
-import Parent from './Parent'
-
-const Item: CollectionConfig = {
-  slug: 'item',
+const Parent: CollectionConfig = {
+  slug: 'parent',
   admin: {
     useAsTitle: 'email',
   },
@@ -16,14 +13,6 @@ const Item: CollectionConfig = {
     "update" : isOwner,
   },
   fields: [
-    manyToOne({
-      "source" : "item",
-      "sourceFieldArguments" : {
-        "required" : true
-      },
-      "target" : Parent
-    }),
-
     {
       "name" : "name",
       "type" : "text"
@@ -31,4 +20,4 @@ const Item: CollectionConfig = {
   ]
 }
 
-export default Item
+export default Parent

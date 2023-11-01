@@ -1,12 +1,10 @@
-import { FieldAccess, FieldHookArgs } from "payload/dist/fields/config/types";
-import { Access, CollectionConfig, Field } from "payload/types";
+import { FieldAccess, FieldHookArgs, RelationshipField } from "payload/dist/fields/config/types";
+import { CollectionConfig, Field } from "payload/types";
 
 type Slug = string;
 
 type ReadOnlyFieldAccessSettings  = {
     read?   : FieldAccess;
-    //create? : FieldAccess;    //Setting the value needs to be done on source-field!
-    //update?: Access;          //Changes need to be made on Source
 }
 
 type FieldAccessSettings = {
@@ -15,26 +13,50 @@ type FieldAccessSettings = {
     update?: FieldAccess; 
 }
 
+type Partial<T> = {
+    [P in keyof T]?: T[P];
+  };
+
+  
 type relationshipArguments = {
-    source : Slug //This Config!
-    target : CollectionConfig //The Collection pointing to many of this!
-    prefix?: string
-    sourceAccess? : FieldAccessSettings
-    targetAccess? : ReadOnlyFieldAccessSettings
+    source                  : Slug //This Config!
+    target                  : CollectionConfig //The Collection pointing to many of this!
+    prefix?                 : string
+    sourceAccess?           : FieldAccessSettings
+    targetAccess?           : ReadOnlyFieldAccessSettings
+    sourceFieldArguments?   : Partial<RelationshipField>
+    targetFieldArguments?   : Partial<RelationshipField>
 }
 
-export function manyToOne( args:relationshipArguments) : Field {
-    const {prefix, source, target, sourceAccess, targetAccess} = args
+const defaultRelationshipArguments : Partial<relationshipArguments> = {
+    prefix                  : "",
+    sourceFieldArguments    : {},
+    targetFieldArguments    : {}
+}
 
-    const sourceField:Field = {
-        name : `${prefix}${target.slug}`,
-        type : "relationship",
-        relationTo : target.slug,
-        hasMany : false,
-        access : sourceAccess
+
+export function manyToOne( args:relationshipArguments) : Field {
+    const { prefix, source, target, 
+        sourceAccess, targetAccess, 
+        sourceFieldArguments, targetFieldArguments} = {...args, ...defaultRelationshipArguments}
+
+    const sourceField:RelationshipField = {
+            ...sourceFieldArguments,
+            name        : `${prefix}${target.slug}`,
+            type        : "relationship",
+            relationTo  : target.slug,
+            hasMany     : false,
+            access      : sourceAccess,
+            
+            //OK; WHAT THE CRAP? Why does this need to be here? Why this for? This partial businnes is, lets say, interresting -.-
+            max         : undefined,
+            maxRows     : undefined,
+            min         : undefined,
+            minRows     : undefined
     }
 
-    const targetField:Field = {
+    const targetField:RelationshipField = {
+        ...targetFieldArguments,
         name : `${prefix}${source}s`,
         type : "relationship",
         relationTo : source,
@@ -50,10 +72,12 @@ export function manyToOne( args:relationshipArguments) : Field {
             ]
         }
     }
+
+
     target.fields.push( targetField );
     return sourceField
 }
-export function onToOne( args:relationshipArguments) : Field {
+export function oneToOne( args:relationshipArguments) : Field {
     const {prefix, source, target, sourceAccess, targetAccess} = args
 
     const sourceField:Field = {
